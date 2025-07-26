@@ -2,6 +2,7 @@
 import express from "express"
 import dotenv from "dotenv"
 import authRoute from "./routes/auth.route.js"
+import connectDB from "./db/connectDB.js";
 
 const app = express();
 dotenv.config();
@@ -18,4 +19,5 @@ app.get("/", (req, res)=>{
 
 app.listen(PORT, () =>{
     console.log(`Server Is Running On PORT ${PORT}`)
+    connectDB();
 })
