@@ -7,6 +7,6 @@ export const login = (req, res) =>{
     res.send("Login Page..")
 }
 
-export const about = (req, res) =>{
-    res.send("About Page..")
+export const logout = (req, res) =>{
+    res.send("logout")
 }
