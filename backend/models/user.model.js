@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
 const UserSchema = mongoose.Schema({
-
-    username : {
+    
+        username : {
         type: String,
         required: true,
         unique: true
@@ -21,16 +21,20 @@ const UserSchema = mongoose.Schema({
         required: true,
         minLength: 6
     },
-    followers : {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        default: []
-    },
-    following : {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        default: []
-    },
+    followers : [
+        {
+            type : mongoose.Schema.Types.ObjectId,
+            ref : "User",
+            default : []
+        }
+    ],
+    following : [
+        {
+            type : mongoose.Schema.Types.ObjectId,
+            ref : "User",
+            default : []
+        }
+    ],
     profileImg : {
         type: String,
         default: ""
