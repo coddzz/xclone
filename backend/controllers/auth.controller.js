@@ -51,8 +51,35 @@ export const signup = async (req, res) =>{
     }
 }
 
-export const login = (req, res) =>{
-    res.send("login..")
+export const login = async (req, res) =>{
+
+    try{
+        const {username, password} = req.body;
+
+        const user = await User.findOne({username})
+        const isPasswordCorrect = await bcrypt.compare(password, user?.password || "");
+
+        if(!user || !isPasswordCorrect){
+            return res.status(400).json({error:"Invalid Username or Password!"})
+        }
+
+        generateToken(user._id, res);
+
+        res.status(200).json({
+            message : "Login Successfull!",
+            _id : user._id,
+            username : user.username,
+            fullname : user.fullname,
+            email : user.email,
+            bio : user.bio
+        })
+
+
+    } catch (error){
+        console.log(`Error in Login controller : ${error}`)
+        res.status(500).json({error:"Internal Server Error!"})
+    }
+
 }
 
 export const logout = (req, res) =>{
