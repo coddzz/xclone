@@ -1,5 +1,7 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
+import cloudinary from "cloudinary";
+
 
 export const getUserProfile = async (req, res) =>{
     
@@ -24,20 +26,20 @@ export const followUnfollowUser = async (req, res) =>{
 
     try{
         const {id} = req.params;
-        const userToModify = await User.findById.(id)
-        const currentUser = await User.findById.(req.user._id)
+        const userToModify = await User.findById(id);
+        const currentUser = await User.findById(req.user._id);
 
-        if (id === req.user_id.toString()){
+        if (id === req.user._id.toString()){
             return res.status(400).json({error:"You can't follow/Unfollow your self!"})
         }
 
         if (!userToModify || !currentUser){
-            return res.status(404).json(error:"User Not Found!")
+            return res.status(404).json({error:"User Not Found!"})
         }
 
-        const iSFollowing = currentUser.following.Includes(id);
+        const isFollowing = currentUser.following.includes(id);
 
-        if(iSFollowing){
+        if(isFollowing){
             //unfollow
             await User.findByIdAndUpdate(id, { $pull: { followers : req.user._id }})
             await User.findByIdAndUpdate(req.user._id, { $pull: { following : id }})
@@ -46,7 +48,7 @@ export const followUnfollowUser = async (req, res) =>{
         } else{
             //follow
             await User.findByIdAndUpdate(id, { $push: { followers : req.user._id}})
-            await User.findByIdAndUpdate(req.user._id, { $push: { followers : id}})
+            await User.findByIdAndUpdate(req.user._id, { $push: { following : id}})
 
             //set notificaton...
 
@@ -114,9 +116,37 @@ export const updateUser = async (req, res) => {
 			user.password = await bcrypt.hash(newPassword, salt);
 		}
 
-		
+		if (profileImg) {
+			if (user.profileImg) {
+                // split by "/" and "." for seperate the image file from the link
+				await cloudinary.uploader.destroy(user.profileImg.split("/").pop().split(".")[0]);
+			}
 
+			const uploadedResponse = await cloudinary.uploader.upload(profileImg);
+			profileImg = uploadedResponse.secure_url;
+		}
 
+		if (coverImg) {
+			if (user.coverImg) {
+				await cloudinary.uploader.destroy(user.coverImg.split("/").pop().split(".")[0]);
+			}
+
+			const uploadedResponse = await cloudinary.uploader.upload(coverImg);
+			coverImg = uploadedResponse.secure_url;
+		}
+
+		user.fullName = fullName || user.fullName;
+		user.email = email || user.email;
+		user.username = username || user.username;
+		user.bio = bio || user.bio;
+		user.link = link || user.link;
+		user.profileImg = profileImg || user.profileImg;
+		user.coverImg = coverImg || user.coverImg;
+
+		user = await user.save();
+
+		// password should be null in response
+		user.password = null;
 
 
 	} catch (error) {
