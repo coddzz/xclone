@@ -61,7 +61,7 @@ export const followUnfollowUser = async (req, res) =>{
     }
 }
 
-export const getSuggestedUsers = async (req, res)=>{
+export const getSuggestedUsers = async (req, res) =>{
     try{
 
         const userId = req.user._id;
@@ -88,7 +88,7 @@ export const getSuggestedUsers = async (req, res)=>{
         console.log(`Error in getSuggestedUsers controller: ${error.message}`)
         res.status(500).json({error : error.message})
     }
-}
+};
 
 
 export const updateUser = async (req, res) => {
@@ -136,8 +136,8 @@ export const updateUser = async (req, res) => {
 		}
 
 		user.fullName = fullName || user.fullName;
-		user.email = email || user.email;
-		user.username = username || user.username;
+		user.email = email || user.email;  //  add a function if email already exists!
+		user.username = username || user.username;  //  add a function if username already exists!
 		user.bio = bio || user.bio;
 		user.link = link || user.link;
 		user.profileImg = profileImg || user.profileImg;
@@ -148,6 +148,7 @@ export const updateUser = async (req, res) => {
 		// password should be null in response
 		user.password = null;
 
+        return res.status(200).json(user);
 
 	} catch (error) {
 		console.log(`Error in updateUser controller: ${error.message}`);
