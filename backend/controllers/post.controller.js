@@ -4,7 +4,6 @@ import { v2 as cloudinary } from "cloudinary";
 
 export const createPost = async (req, res) => {
 	try {
-        // text, img, userId
 		const { text } = req.body;
 		let { img } = req.body;
 		const userId = req.user._id.toString();
@@ -22,6 +21,7 @@ export const createPost = async (req, res) => {
 		}
 
 		const newPost = new Post({
+			
 			user: userId,
 			text,
 			img,
@@ -29,7 +29,6 @@ export const createPost = async (req, res) => {
 
 		await newPost.save();
 		res.status(201).json(newPost);
-
 	} catch (error) {
 		res.status(500).json({ error: "Internal server error" });
 		console.log("Error in createPost controller: ", error);
@@ -38,9 +37,7 @@ export const createPost = async (req, res) => {
 
 export const deletePost = async (req, res) => {
 	try {
-
 		const post = await Post.findById(req.params.id);
-
 		if (!post) {
 			return res.status(404).json({ error: "Post not found" });
 		}
@@ -57,7 +54,6 @@ export const deletePost = async (req, res) => {
 		await Post.findByIdAndDelete(req.params.id);
 
 		res.status(200).json({ message: "Post deleted successfully" });
-
 	} catch (error) {
 		console.log("Error in deletePost controller: ", error);
 		res.status(500).json({ error: "Internal server error" });
