@@ -9,6 +9,7 @@ import { MdPassword } from "react-icons/md";
 import { MdDriveFileRenameOutline } from "react-icons/md";
 import { baseUrl } from "../../../constants/url.js";
 import { useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 const SignUpPage = () => {
 	const [formData, setFormData] = useState({
@@ -40,7 +41,7 @@ const SignUpPage = () => {
 			return data;
 		},
 		onSuccess : (data) =>{
-			console.log("User Created!", data);
+			toast("User Created Successfully!")
 		},
 		onError:(error) =>{
 			console.log("Signup failed:", error.message);

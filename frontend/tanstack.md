@@ -16,3 +16,6 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 # /src/constant/url.js
 export const baseUrl = "http://localhost:5000"
+
+# react-hot-toast
+> npm i react-hot-toast
