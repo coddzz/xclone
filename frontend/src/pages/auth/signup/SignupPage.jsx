@@ -8,7 +8,7 @@ import { FaUser } from "react-icons/fa";
 import { MdPassword } from "react-icons/md";
 import { MdDriveFileRenameOutline } from "react-icons/md";
 import { baseUrl } from "../../../constants/url.js";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
 const SignUpPage = () => {
@@ -19,6 +19,7 @@ const SignUpPage = () => {
 		password: "",
 	});
 
+	const queryClient = useQueryClient();
 
 	const { mutate: signup , isPending, isError, error } = useMutation({
 		mutationFn: async ({ email, username, fullname, password}) =>{
@@ -41,12 +42,17 @@ const SignUpPage = () => {
 			return data;
 		},
 		onSuccess : (data) =>{
-			toast("User Created Successfully!")
+			console.log(data)
+			toast.success("User Created Successfully!")
+			toast('!!', { icon: '😎'});
+
+			queryClient.invalidateQueries({ queryKey: ["authUser"] });
 		},
 		onError:(error) =>{
 			console.log("Signup failed:", error.message);
 		},
 	});
+
 
 
 	const handleSubmit = (e) => {
