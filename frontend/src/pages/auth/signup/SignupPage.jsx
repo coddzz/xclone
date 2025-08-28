@@ -10,6 +10,7 @@ import { MdDriveFileRenameOutline } from "react-icons/md";
 import { baseUrl } from "../../../constants/url.js";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import LoadingSpinner from "../../../components/common/LoadingSpinner.jsx";
 
 const SignUpPage = () => {
 	const [formData, setFormData] = useState({
@@ -23,6 +24,7 @@ const SignUpPage = () => {
 
 	const { mutate: signup , isPending, isError, error } = useMutation({
 		mutationFn: async ({ email, username, fullname, password}) =>{
+			
 			const res = await fetch (`${baseUrl}/api/auth/signup`,{
 				method: "POST",
 				credentials: "include",
@@ -121,7 +123,7 @@ const SignUpPage = () => {
 						/>
 					</label>
 					<button className='btn rounded-full btn-primary text-white'>
-					{isPending? "Loading":"Sign Up"}
+					{isPending? <LoadingSpinner/>:"Sign Up"}
 					</button>
 					{isError && <p className='text-red-500'>{error.message}</p>}
 				</form>

@@ -23,7 +23,6 @@ const App = () => {
       <RightPanel/>
       <Toaster/>
     </div>
-
   );
 };
 
