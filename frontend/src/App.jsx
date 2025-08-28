@@ -12,7 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { baseUrl } from "./constants/url.js";
 
 const App = () => {
-  const { data, isLoading } = useQuery({
+  const { data : authUser, isLoading } = useQuery({
     queryKey : ["authUser"],
     queryFn : async () =>{
       const res = await fetch(`${baseUrl}/api/auth/me`,{
