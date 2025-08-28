@@ -30,13 +30,14 @@ const App = () => {
       console.log("Auth user", data)
       return data;
     },
+    retry : false,
     onSuccess : (data) =>{
 			console.log(data)
 		},
 		onError : (error) =>{
 			console.log(error.message);
 		}
-  });
+  })
 
   if(isLoading){
     return (
