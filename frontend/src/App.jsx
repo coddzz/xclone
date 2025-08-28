@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate} from "react-router-dom";
 import HomePage from "./pages/home/HomePage";
 import SignUpPage from "./pages/auth/signup/SignupPage";
 import LoginPage from "./pages/auth/signup/LoginPage";
@@ -51,13 +51,13 @@ const App = () => {
     <div className="flex max-w-6xl mx-auto">
       <Sidebar/> 
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/signup" element={<SignUpPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/notifications" element={<NotificationPage />} />
-        <Route path="/profile/:username" element={<ProfilePage />} />
+        <Route path="/" element={authUser ? <HomePage /> : <Navigate to="/login"/>} />
+        <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/"/>} />
+        <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/"/>} />
+        <Route path="/notifications" element={authUser ? <NotificationPage /> : <Navigate to="/login"/>} />
+        <Route path="/profile/:username" element={authUser ? <ProfilePage /> : <Navigate to="/login"/>} />
       </Routes>
-      <RightPanel/>
+      {authUser && <RightPanel/>}
       <Toaster/>
     </div>
   );
