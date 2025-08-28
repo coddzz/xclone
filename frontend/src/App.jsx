@@ -10,6 +10,7 @@ import ProfilePage from "./pages/profile/ProfilePage";
 import { Toaster } from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
 import { baseUrl } from "./constants/url.js";
+import LoadingSpinner from "./components/common/LoadingSpinner.jsx";
 
 const App = () => {
   const { data : authUser, isLoading } = useQuery({
@@ -36,6 +37,15 @@ const App = () => {
 			console.log(error.message);
 		}
   });
+
+  if(isLoading){
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <LoadingSpinner size = 'lg' />
+      </div>
+    )
+  }
+
   return (
     <div className="flex max-w-6xl mx-auto">
       <Sidebar/> 
