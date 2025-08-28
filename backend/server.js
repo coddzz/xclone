@@ -40,13 +40,6 @@ app.use("/api/posts", postRoute);
 app.use("/api/notifications", notificationRoute);
 
 
-
-app.get("/", (req, res)=>{
-    res.send("Hello World!!")
-    console.log("Web Page Reloded!")
-});
-
-
 app.listen(PORT, () =>{
     console.log(`Server Is Running On PORT ${PORT}`)
     connectDB();

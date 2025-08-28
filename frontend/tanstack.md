@@ -19,3 +19,38 @@ export const baseUrl = "http://localhost:5000"
 
 # react-hot-toast
 > npm i react-hot-toast
+
+# useMutation()
+
+```
+const { mutate: loginMutation , isPending, isError, error } = useMutation({
+		mutationFn: async ({ username, password }) =>{
+
+			const res = await fetch(`${ baseUrl }/api/auth/login`,{
+				method : "POST",
+				credentials : "include",
+				headers : {
+					"Content-Type" : "application/json"
+				},
+				body : JSON.stringify({username, password})
+			})
+
+			const data = await res.json();
+
+			if(!res.ok){
+				throw new Error (data.error || "Something went wrong!")
+			}
+
+			return data;
+		},
+		onSuccess : () =>{
+			toast.success("Login Success!")
+			// refetch the authUser
+			queryClient.invalidateQueries({ queryKey: ["authUser"] });
+		},
+		onError:(error) =>{
+			console.log("Login failed:", error.message);
+		},
+	});
+```
+
