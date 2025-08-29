@@ -24,6 +24,9 @@ const App = () => {
         }
       })
       const data = await res.json();
+      if(data.error){
+        return null //its not a proper way. but it works.
+      }
       if(!res.ok){
         throw new Error(data.error || "Something went wrong!")
       }
