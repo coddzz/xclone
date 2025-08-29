@@ -43,6 +43,7 @@ const LoginPage = () => {
 			toast.success("Login Success!")
 			// refetch the authUser
 			queryClient.invalidateQueries({ queryKey: ["authUser"] });
+			// invalidateQueries is used to invalidate "authUser" for navigate the page.
 		},
 		onError:(error) =>{
 			console.log("Login failed:", error.message);
