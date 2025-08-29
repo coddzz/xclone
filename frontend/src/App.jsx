@@ -25,7 +25,7 @@ const App = () => {
       })
       const data = await res.json();
       if(data.error){
-        return null //its not a proper way. but it works.
+        return null //it works.
       }
       if(!res.ok){
         throw new Error(data.error || "Something went wrong!")
@@ -52,7 +52,7 @@ const App = () => {
 
   return (
     <div className="flex max-w-6xl mx-auto">
-      <Sidebar/> 
+      {authUser && <Sidebar/>}
       <Routes>
         <Route path="/" element={authUser ? <HomePage /> : <Navigate to="/login"/>} />
         <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/"/>} />
