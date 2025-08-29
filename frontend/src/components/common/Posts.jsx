@@ -2,6 +2,7 @@ import Post from "./Post";
 import PostSkeleton from "../skeletons/PostSkeleton";
 import {baseUrl} from "../../constants/url.js";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 
 const Posts = ({feedType}) => {
 
@@ -21,7 +22,7 @@ const Posts = ({feedType}) => {
 
 	const POST_ENDPOINT = getPostEndPoint()
 	
-	const { data: posts, isLoading} = useQuery({
+	const { data: posts, isLoading, refetch, isRefetching} = useQuery({
 
 		queryKey : ["posts"],
 		queryFn : async () =>{
@@ -43,9 +44,13 @@ const Posts = ({feedType}) => {
 		},
 	});
 
+	useEffect(() =>{
+		refetch();
+	},[feedType,refetch])
+
 	return (
 		<>
-			{isLoading && (
+			{(isLoading || isRefetching) && (
 				<div className='flex flex-col justify-center'>
 					<PostSkeleton />
 					<PostSkeleton />
