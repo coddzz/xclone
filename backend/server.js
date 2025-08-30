@@ -27,7 +27,11 @@ app.use( cors({
     credentials: true
 }))
 
-app.use(express.json());
+app.use(express.json(
+    {
+        limit : "5mb"  // default value 100k
+    }
+));
 app.use(cookieParser())
 app.use(express.urlencoded({
     extended: true
