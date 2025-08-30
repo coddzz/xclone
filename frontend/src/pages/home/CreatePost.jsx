@@ -2,18 +2,48 @@ import { CiImageOn } from "react-icons/ci";
 import { BsEmojiSmileFill } from "react-icons/bs";
 import { useRef, useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import LoadingSpinner from "../../components/common/LoadingSpinner";
+import { baseUrl } from "../../constants/url";
 
 const CreatePost = () => {
 	const [text, setText] = useState("");
 	const [img, setImg] = useState(null);
-
 	const imgRef = useRef(null);
 
 	const { data: authUser } = useQuery({ queryKey: ["authUser"]});
 
-	const isPending = false;
-	const isError = false;
+	const queryClient = useQueryClient();
+	const {mutate : CreatePost, isPending, isError, error} = useMutation({
+		mutationFn: async ({ text, img }) =>{
+			try{
+				const res = await fetch(`${baseUrl}/api/posts/create`,{
+					method : "POST",
+					credentials : "include",
+					headers : {
+						"Content-Type" : "application/json"
+					},
+					body : JSON.stringify({text,img})
+				})
+				const data = await res.json()
+				if(!res.ok){
+					throw new Error (data.error || "Something went Wrong!")
+				}
+				return data;
+			} catch (error){
+				throw error;
+			}
+		},
+		onSuccess : ()=>{
+			setImg(null)
+			setText("")
+			toast.success("Post Created!")
+			queryClient.invalidateQueries({queryKey: ["posts"]})
+		}
+	});
+
+
 
 	const data = {
 		profileImg: "/avatars/boy1.png",
@@ -21,7 +51,7 @@ const CreatePost = () => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		alert("Post created successfully");
+		CreatePost({text,img})
 	};
 
 	const handleImgChange = (e) => {
@@ -72,10 +102,10 @@ const CreatePost = () => {
 					</div>
 					<input type='file' hidden ref={imgRef} onChange={handleImgChange} />
 					<button className='btn btn-primary rounded-full btn-sm text-white px-4'>
-						{isPending ? "Posting..." : "Post"}
+						{isPending ? <LoadingSpinner size="sm" /> : "Post"}
 					</button>
 				</div>
-				{isError && <div className='text-red-500'>Something went wrong</div>}
+				{isError && <div className='text-red-500'>{error.message}</div>}
 			</form>
 		</div>
 	);
