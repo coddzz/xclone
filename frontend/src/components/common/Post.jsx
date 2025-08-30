@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { baseUrl } from "../../constants/url.js";
 import LoadingSpinner from "../common/LoadingSpinner.jsx";
+import toast from "react-hot-toast"; 
 
 const Post = ({ post }) => {
 	const [comment, setComment] = useState("");
@@ -17,7 +18,7 @@ const Post = ({ post }) => {
 	const {mutate:deletePost, isPending: isDeleting} = useMutation({
 		mutationFn: async () =>{
 			try {
-				const res = await fetch(`${baseUrl}/api/posts/${post.id}`,{
+				const res = await fetch(`${baseUrl}/api/posts/${post._id}`,{
 					method : "DELETE",
 					credentials: "include",
 					headers:{
@@ -31,8 +32,10 @@ const Post = ({ post }) => {
 				return data
 			} catch (error) {
 				throw error;
-
 			}
+		},
+		onSuccess : () =>{
+			toast.success("Post Deleted Successfully!");
 		}
 	})
 
@@ -79,7 +82,7 @@ const Post = ({ post }) => {
 									<FaTrash className='cursor-pointer hover:text-red-500' onClick={handleDeletePost} />
 								)}
 								{isDeleting && (
-									<LoadingSpinner size = "sm" />
+									<LoadingSpinner size="sm" />
 								)}
 							</span>
 						)}
