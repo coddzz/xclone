@@ -5,15 +5,16 @@ import { FaRegBookmark } from "react-icons/fa6";
 import { FaTrash } from "react-icons/fa";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { baseUrl } from "../../constants/url.js";
 import LoadingSpinner from "../common/LoadingSpinner.jsx";
 import toast from "react-hot-toast"; 
 
 const Post = ({ post }) => {
 	const [comment, setComment] = useState("");
-
 	const {data:authUser} = useQuery({ queryKey: ["authUser"]});
+
+	const queryClient = useQueryClient();
 
 	const {mutate:deletePost, isPending: isDeleting} = useMutation({
 		mutationFn: async () =>{
@@ -36,6 +37,7 @@ const Post = ({ post }) => {
 		},
 		onSuccess : () =>{
 			toast.success("Post Deleted Successfully!");
+			queryClient.invalidateQueries({queryKey: ["posts"]});
 		}
 	})
 
