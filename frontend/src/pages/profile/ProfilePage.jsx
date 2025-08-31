@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import Posts from "../../components/common/Posts";
@@ -25,7 +25,7 @@ const ProfilePage = () => {
 	const isMyProfile = true;
 	const {username} = useParams();
 
-	const {data : user, isLoading} = useQuery({
+	const {data : user, isLoading, refetch, isRefetching} = useQuery({
 		queryKey: ["userProfile"],
 		queryFn : async () =>{
 			try{
@@ -47,6 +47,10 @@ const ProfilePage = () => {
 		}
 	})
 
+	useEffect(()=>{
+		refetch();
+	},[username,refetch]);
+
 	const handleImgChange = (e, state) => {
 		const file = e.target.files[0];
 		if (file) {
@@ -63,10 +67,10 @@ const ProfilePage = () => {
 		<>
 			<div className='flex-[4_4_0]  border-r border-gray-700 min-h-screen '>
 				{/* HEADER */}
-				{isLoading && <ProfileHeaderSkeleton />}
-				{!isLoading && !user && <p className='text-center text-lg mt-4'>User not found</p>}
+				{(isLoading || isRefetching) && <ProfileHeaderSkeleton />}
+				{!isLoading && !isRefetching && !user && <p className='text-center text-lg mt-4'>User not found</p>}
 				<div className='flex flex-col'>
-					{!isLoading && user && (
+					{!isLoading && !isRefetching && user && (
 						<>
 							<div className='flex gap-10 px-4 py-2 items-center'>
 								<Link to='/'>
