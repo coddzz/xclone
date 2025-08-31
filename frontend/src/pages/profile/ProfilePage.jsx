@@ -13,6 +13,7 @@ import { FaLink } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { useQuery } from "@tanstack/react-query";
 import { baseUrl } from "../../constants/url";
+import { formatMemberSinceDate } from "../../utils/db/date";
 
 const ProfilePage = () => {
 	const [coverImg, setCoverImg] = useState(null);
@@ -50,6 +51,8 @@ const ProfilePage = () => {
 	useEffect(()=>{
 		refetch();
 	},[username,refetch]);
+
+	const memberSinceData = formatMemberSinceDate(user?.createdAt)
 
 	const handleImgChange = (e, state) => {
 		const file = e.target.files[0];
@@ -157,19 +160,19 @@ const ProfilePage = () => {
 											<>
 												<FaLink className='w-3 h-3 text-slate-500' />
 												<a
-													href='https://youtube.com/@asaprogrammer_'
-													target='_blank'
+													href={user?.link}
+													target='_blank' // open in new tab
 													rel='noreferrer'
 													className='text-sm text-blue-500 hover:underline'
 												>
-													youtube.com/@asaprogrammer_
+													{user?.link}
 												</a>
 											</>
 										</div>
 									)}
 									<div className='flex gap-2 items-center'>
 										<IoCalendarOutline className='w-4 h-4 text-slate-500' />
-										<span className='text-sm text-slate-500'>Joined July 2021</span>
+										<span className='text-sm text-slate-500'>{memberSinceData}</span>
 									</div>
 								</div>
 								<div className='flex gap-2'>
