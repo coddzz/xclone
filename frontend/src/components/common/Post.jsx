@@ -77,13 +77,52 @@ const Post = ({ post }) => {
 		}
 	})
 
+	const {mutate: commentPost, isPending : isCommenting} = useMutation({
+		mutationFn: async ()=>{
+			try{
+				const res = await fetch(`${baseUrl}/api/posts/comment/${post._id}`,{
+					method: "POST",
+					credentials: "include",
+					headers:{
+						"Content-Type":"application/json"
+					},
+					body: JSON.stringify({text: comment})
+				})
+				const data = await res.json();
+				if(!res.ok){
+					throw new Error (data.error || "Something went wrong!")
+				}
+				return data;
+
+			} catch(error){
+				throw error;
+			}
+		},
+		onSuccess : (updatedComment)=>{
+			toast.success("Comment Posted Successfully!")
+			setComment("");
+			//queryClient.invalidateQueries({queryKey: ["posts"]})
+			queryClient.setQueryData(["posts"],(oldDtata)=>{  // update the cache.
+				return oldDtata.map((p)=>{
+					if(p._id === post._id){
+						return {...p, comment: updatedComment}
+					}
+					return p;
+				})
+			})
+			
+		},
+		onError: (error)=>{
+			toast.error(error.message)
+		}
+	}) 
+
+
 	const postOwner = post.user;	
 	const isLiked = post.likes.includes(authUser._id); //true
 	const isMyPost = authUser._id === post.user._id; //true
 
 	const formattedDate = "1h";
-
-	const isCommenting = true;
 
 	const handleDeletePost = () => {
 		deletePost();
@@ -91,6 +130,7 @@ const Post = ({ post }) => {
 
 	const handlePostComment = (e) => {
 		e.preventDefault();
+		commentPost();
 	};
 
 	const handleLikePost = () => {
