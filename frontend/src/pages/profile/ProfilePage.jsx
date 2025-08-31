@@ -14,6 +14,8 @@ import { MdEdit } from "react-icons/md";
 import { useQuery } from "@tanstack/react-query";
 import { baseUrl } from "../../constants/url";
 import { formatMemberSinceDate } from "../../utils/db/date";
+import useFollow from "../../hooks/useFollow.js"
+import LoadingSpinner from "../../components/common/LoadingSpinner.jsx";
 
 const ProfilePage = () => {
 	const [coverImg, setCoverImg] = useState(null);
@@ -23,8 +25,9 @@ const ProfilePage = () => {
 	const coverImgRef = useRef(null);
 	const profileImgRef = useRef(null);
 
-	const isMyProfile = true;
 	const {username} = useParams();
+
+	const {data:authUser} = useQuery({queryKey:["authUser"]})
 
 	const {data : user, isLoading, refetch, isRefetching} = useQuery({
 		queryKey: ["userProfile"],
@@ -65,6 +68,10 @@ const ProfilePage = () => {
 			reader.readAsDataURL(file);
 		}
 	};
+
+	const isMyProfile = authUser?._id === user?._id;
+	const {follow, isPending } = useFollow()
+	const amIFollowing = authUser?.following.includes(user?._id)
 
 	return (
 		<>
@@ -132,15 +139,18 @@ const ProfilePage = () => {
 								{!isMyProfile && (
 									<button
 										className='btn btn-outline rounded-full btn-sm'
-										onClick={() => alert("Followed successfully")}
+										onClick={() => {
+											follow(user?._id)
+										}}
 									>
-										Follow
+										{isPending && <LoadingSpinner size="sm" />}
+										{!isPending && amIFollowing && "Unfollow"}
+										{!isPending && !amIFollowing && "follow"}
 									</button>
 								)}
 								{(coverImg || profileImg) && (
 									<button
-										className='btn btn-primary rounded-full btn-sm text-white px-4 ml-2'
-										onClick={() => alert("Profile updated successfully")}
+										className='btn btn-primary rounded-full btn-sm text-white px-4 ml-2'				
 									>
 										Update
 									</button>
