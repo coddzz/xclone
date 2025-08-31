@@ -4,16 +4,22 @@ import {baseUrl} from "../../constants/url.js";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
-const Posts = ({feedType}) => {
+const Posts = ({feedType, username, userId}) => {
 
 	const getPostEndPoint = ()=>{
 		switch(feedType){
 			
 			case "forYou" : 
-			return `${baseUrl}/api/posts/all`;
+				return `${baseUrl}/api/posts/all`;
 			
 			case "following":
 				return `${baseUrl}/api/posts/following`;
+
+			case "posts":
+				return `${baseUrl}/api/posts/user/${username}`;
+
+			case "likes":
+				return `${baseUrl}/api/posts/likes/${userId}`;
 
 			default :
 				return `${baseUrl}/api/posts/all`;
