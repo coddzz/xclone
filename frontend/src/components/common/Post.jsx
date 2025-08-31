@@ -102,16 +102,7 @@ const Post = ({ post }) => {
 		onSuccess : (updatedComment)=>{
 			toast.success("Comment Posted Successfully!")
 			setComment("");
-			//queryClient.invalidateQueries({queryKey: ["posts"]})
-			queryClient.setQueryData(["posts"],(oldDtata)=>{  // update the cache.
-				return oldDtata.map((p)=>{
-					if(p._id === post._id){
-						return {...p, comment: updatedComment}
-					}
-					return p;
-				})
-			})
-			
+			queryClient.invalidateQueries({queryKey: ["posts"]});
 		},
 		onError: (error)=>{
 			toast.error(error.message)
