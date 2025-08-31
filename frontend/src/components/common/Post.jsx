@@ -9,6 +9,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { baseUrl } from "../../constants/url.js";
 import LoadingSpinner from "../common/LoadingSpinner.jsx";
 import toast from "react-hot-toast"; 
+import { formatPostDate } from "../../utils/db/date/index.js";
 
 const Post = ({ post }) => {
 	const [comment, setComment] = useState("");
@@ -122,7 +123,7 @@ const Post = ({ post }) => {
 	const isLiked = post.likes.includes(authUser._id); //true
 	const isMyPost = authUser._id === post.user._id; //true
 
-	const formattedDate = "1h";
+	const formattedDate = formatPostDate(post.createdAt);
 
 	const handleDeletePost = () => {
 		deletePost();
