@@ -60,9 +60,17 @@ const Post = ({ post }) => {
 				throw error;
 			}
 		},
-		onSuccess: ()=>{
+		onSuccess :(updatedLikes)=>{
 			toast.success("Post Liked");
-			queryClient.invalidateQueries({queryKey: ["posts"]}) //not correct way, but its work
+			//queryClient.invalidateQueries({queryKey: ["posts"]}) //not correct way, but its work
+			queryClient.setQueryData(["posts"],(oldDtata)=>{  // update the cache directly for that post.
+				return oldDtata.map((p)=>{
+					if(p._id === post._id){
+						return {...p, likes: updatedLikes}
+					}
+					return p;
+				})
+			})
 		},
 		onError: (error)=>{
 			toast.error(error.message)
