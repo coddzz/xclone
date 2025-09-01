@@ -32,27 +32,28 @@ const Posts = ({feedType, username, userId}) => {
 
 		queryKey : ["posts"],
 		queryFn : async () =>{
-			const res = await fetch(POST_ENDPOINT,{
-				method : "GET",
-				credentials : "include",
-				headers : {
-					"Content-Type" : "application/json"
+			try{
+				const res = await fetch(POST_ENDPOINT,{
+					method : "GET",
+					credentials : "include",
+					headers : {
+						"Content-Type" : "application/json"
+					}
+				})
+				const data = await res.json();
+				if(!res.ok){
+					throw new Error(data.error || "Something went wrong!")
 				}
-			})
-			const data = await res.json();
-			if(!res.ok){
-				throw new Error(data.error || "Something went wrong!")
-			}
-			return data;			
-		},
-		onError:(error) =>{
-			console.log("Posts faliure",error.message);
-		},
+				return data;
+			} catch(error){
+				throw error;
+			}						
+		}
 	});
 
 	useEffect(() =>{
 		refetch();
-	},[feedType,refetch])
+	},[feedType, refetch, username])
 
 	return (
 		<>
