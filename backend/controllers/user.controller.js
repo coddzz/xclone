@@ -101,7 +101,7 @@ export const getSuggestedUsers = async (req, res) =>{
 
 
 export const updateUser = async (req, res) => {
-	const { fullName, email, username, currentPassword, newPassword, bio, link } = req.body;
+	const { fullname, email, username, currentPassword, newPassword, bio, link } = req.body;
 	let { profileImg, coverImg } = req.body;
 
 	const userId = req.user._id;
@@ -144,7 +144,7 @@ export const updateUser = async (req, res) => {
 			coverImg = uploadedResponse.secure_url;
 		}
 
-		user.fullName = fullName || user.fullName;
+		user.fullname = fullname || user.fullname;
 		user.email = email || user.email;  //  add a function if email already exists!
 		user.username = username || user.username;  //  add a function if username already exists!
 		user.bio = bio || user.bio;
