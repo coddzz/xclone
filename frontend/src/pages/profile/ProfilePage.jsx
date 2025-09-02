@@ -1,22 +1,20 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-
 import Posts from "../../components/common/Posts";
 import ProfileHeaderSkeleton from "../../components/skeletons/ProfileHeaderSkeleton";
 import EditProfileModal from "./EditProfileModal";
-
 import { POSTS } from "../../utils/db/dummy";
-
 import { FaArrowLeft } from "react-icons/fa6";
 import { IoCalendarOutline } from "react-icons/io5";
 import { FaLink } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { baseUrl } from "../../constants/url";
 import { formatMemberSinceDate } from "../../utils/db/date";
 import useFollow from "../../hooks/useFollow.js"
 import LoadingSpinner from "../../components/common/LoadingSpinner.jsx";
-import toast from "react-hot-toast";
+import useUpdateUserProfile from "../../hooks/useUpdateUserProfile.js";
+
 
 const ProfilePage = () => {
 	const [coverImg, setCoverImg] = useState(null);
@@ -27,7 +25,6 @@ const ProfilePage = () => {
 	const profileImgRef = useRef(null);
 
 	const {username} = useParams();
-	const queryClient = useQueryClient();
 
 	const {data:authUser} = useQuery({queryKey:["authUser"]})
 
@@ -57,40 +54,8 @@ const ProfilePage = () => {
 		refetch();
 	},[username,refetch]);
 
-	const {mutate : updateProfile, isPending : isUpdatingProfile } = useMutation({
-		mutationFn: async ()=>{
-			try{
-				const res = await fetch(`${baseUrl}/api/users/update`,{
-					method:"POST",
-					credentials:"include",
-					headers:{
-						"Content-Type":"application/json"
-					},
-					body : JSON.stringify({
-						coverImg,
-						profileImg
-					})
-				})
-				const data = res.json();
-				if(!res.ok){
-					throw new Error(data.error || "Something went wrong!")
-				}
-				return data;
-			} catch(error){
-				throw error;
-			}
-		},
-		onSuccess: ()=>{
-			toast.success("profile Updated Succesfully!")
-			Promise.all([
-				queryClient.invalidateQueries({queryKey:["authUser"]}), //invalidate
-				queryClient.invalidateQueries({queryKey:["userProfile"]}) 
-			])
-		},
-		onError: (error)=>{
-			toast.error(error.message)
-		}
-	})
+	const { updateProfile, isUpdatingProfile } = useUpdateUserProfile();
+	
 
 	const memberSinceData = formatMemberSinceDate(user?.createdAt)
 
@@ -124,7 +89,7 @@ const ProfilePage = () => {
 									<FaArrowLeft className='w-4 h-4' />
 								</Link>
 								<div className='flex flex-col'>
-									<p className='font-bold text-lg'>{user?.fullName}</p>
+									<p className='font-bold text-lg'>{user?.fullname}</p>
 									<span className='text-sm text-slate-500'>{POSTS?.length} posts</span>
 								</div>
 							</div>
@@ -189,7 +154,9 @@ const ProfilePage = () => {
 									<button
 										className='btn btn-primary rounded-full btn-sm text-white px-4 ml-2'
 										onClick={() =>{
-											updateProfile()
+											updateProfile({
+												coverImg, profileImg
+											})
 										}}				
 									>
 										{isUpdatingProfile && <LoadingSpinner size="sm"/>}
@@ -200,7 +167,7 @@ const ProfilePage = () => {
 
 							<div className='flex flex-col gap-4 mt-14 px-4'>
 								<div className='flex flex-col'>
-									<span className='font-bold text-lg'>{user?.fullName}</span>
+									<span className='font-bold text-lg'>{user?.fullname}</span>
 									<span className='text-sm text-slate-500'>@{user?.username}</span>
 									<span className='text-sm my-1'>{user?.bio}</span>
 								</div>
